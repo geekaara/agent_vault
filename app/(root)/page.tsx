@@ -1,6 +1,7 @@
 import SearchForm from "@/components/SearchForm";
-import { title } from "process";
-import AgentCard from "@/components/AgentCard";
+import AgentCard, { AgentTypeCard } from "@/components/AgentCard";
+import { AGENTS_QUERY } from "@/sanity/lib/queries";
+import { sanityFetch, SanityLive } from "@/sanity/lib/live";
 
 export default async function Home({
   searchParams,
@@ -8,19 +9,21 @@ export default async function Home({
   searchParams: Promise<{ query?: string }>;
 }) {
   const query = (await searchParams).query;
-  const posts = [
-    {
-      _createdAt: new Date(),
-      views: 100,
-      owner: { _id: 1, name: "John Doe" },
-      _id: 1,
-      description: "This is a description",
-      image:
-        "https://images.unsplash.com/photo-1734899848867-02ac05338425?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      category: "AI",
-      title: "AI Agent 1",
-    },
-  ];
+  const { data: posts } = await sanityFetch({ query: AGENTS_QUERY });
+  // console.log(JSON.stringify(posts, null, 2));
+  // const posts = [
+  //   {
+  //     _createdAt: new Date(),
+  //     views: 100,
+  //     owner: { _id: 1, name: "John Doe" },
+  //     _id: 1,
+  //     description: "This is a description",
+  //     image:
+  //       "https://images.unsplash.com/photo-1734899848867-02ac05338425?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  //     category: "AI",
+  //     title: "AI Agent 1",
+  //   },
+  // ];
   return (
     <div>
       <section className="pink_container">
@@ -38,7 +41,7 @@ export default async function Home({
         </p>
         <ul className="mt-7 card_grid">
           {posts?.length > 0 ? (
-            posts.map((post: AgentCardType, index: number) => (
+            posts.map((post: AgentTypeCard) => (
               <AgentCard key={post?._id} post={post} />
             ))
           ) : (
@@ -46,6 +49,7 @@ export default async function Home({
           )}
         </ul>
       </section>
+      <SanityLive />
     </div>
   );
 }

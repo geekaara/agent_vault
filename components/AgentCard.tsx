@@ -4,18 +4,13 @@ import { EyeIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import { Agent, Owner } from "@/sanity/types";
+
+export type AgentTypeCard = Omit<Agent, "owner"> & { owner?: Owner };
 
 const AgentCard = ({ post }: { post: AgentTypeCard }) => {
-  const {
-    title,
-    description,
-    image,
-    category,
-    views,
-    owner: { _id: ownerId, name },
-    _createdAt,
-    _id,
-  } = post;
+  const { title, description, image, category, views, owner, _createdAt, _id } =
+    post;
   return (
     <li className="agent-card group">
       <div className="flex-between">
@@ -27,17 +22,17 @@ const AgentCard = ({ post }: { post: AgentTypeCard }) => {
       </div>
       <div className="flex-between mt-5 gap-5">
         <div className="flex-1">
-          <Link href={`/user/${post.ownerId}`}>
-            <p className="text-16-semibold text-primary">{name}</p>
+          <Link href={`/user/${owner?._id}`}>
+            <p className="text-16-semibold text-primary">{owner?.name}</p>
           </Link>
           <Link href={`/agent/${_id}`}>
             <h3 className="text-26-semibold line-clamp-1">{title}</h3>
           </Link>
         </div>
-        <Link href={`/user/${ownerId}`}>
+        <Link href={`/user/${owner?._id}`}>
           <Image
-            src="https://placehold.co/48x48"
-            alt="placeholder"
+            src={owner?.image!}
+            alt={owner?.name!}
             width={48}
             height={48}
             className="rounded-full"
@@ -50,7 +45,7 @@ const AgentCard = ({ post }: { post: AgentTypeCard }) => {
       </Link>
       <div className="flex-between mt-5 gap-3">
         <p className="agent-card-category">{category}</p>
-        <Link href={`/?query=${category.toLowerCase()}`}>
+        <Link href={`/?query=${category?.toLowerCase()}`}>
           <p className="text-16-medium">{category}</p>
         </Link>
         <Button className="agent-card_btn" asChild>
